@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  task-download-video:
+    container_name: task-download-video
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /app/task-download-video
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "task-download-video"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  task-extract-sound:
+    container_name: task-extract-sound
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /app/task-extract-sound
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "task-extract-sound"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

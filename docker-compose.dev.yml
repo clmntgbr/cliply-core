@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  task-download-video:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        PACKAGE_NAME: task-download-video
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    container_name: task-download-video-dev
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  task-extract-sound:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        PACKAGE_NAME: task-extract-sound
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    container_name: task-extract-sound-dev
+    env_file:
+      - .env
+    restart: unless-stopped
+
+volumes:
+  cargo-cache:
+  target-cache:

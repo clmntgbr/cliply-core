@@ -1,0 +1,30 @@
+FROM rust:latest
+
+WORKDIR /app
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    ca-certificates \
+    ffmpeg \
+    curl \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install yt-dlp
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
+    chmod a+rx /usr/local/bin/yt-dlp
+
+# Install cargo-watch for hot reload
+RUN cargo install cargo-watch
+
+# Build argument to specify which package to run
+ARG PACKAGE_NAME
+ENV PACKAGE_NAME=${PACKAGE_NAME}
+
+# Command will use cargo-watch to rebuild on changes
+CMD cargo watch -x "run --package ${PACKAGE_NAME}"
+
