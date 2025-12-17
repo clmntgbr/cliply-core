@@ -209,20 +209,8 @@ impl WebhookClient {
 
     /// Send a webhook notification with JSON payload
     pub async fn send(&self, url: &str, payload: &serde_json::Value) -> Result<()> {
-        info!("=== WEBHOOK DEBUG MODE ===");
-        info!("Would send webhook to: {}", url);
-        info!("Payload (pretty): \n{}", serde_json::to_string_pretty(payload).unwrap_or_default());
-        
-        if let Some(token) = &self.auth_token {
-            info!("Auth token present: {}...", &token.chars().take(10).collect::<String>());
-        } else {
-            info!("No auth token configured");
-        }
-        
-        info!("=== END WEBHOOK DEBUG ===\n");
+        info!("Sending webhook to {}", url);
 
-        // Comment out actual HTTP sending for testing
-        /*
         let mut request = self.client.post(url)
             .header("Content-Type", "application/json")
             .json(payload);
@@ -248,9 +236,6 @@ impl WebhookClient {
                 Err(anyhow::anyhow!("Failed to send webhook: {}", e))
             }
         }
-        */
-        
-        Ok(())
     }
 
     /// Send a success webhook
