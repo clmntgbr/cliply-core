@@ -201,6 +201,7 @@ impl WebhookClient {
         Self {
             client: reqwest::Client::builder()
                 .timeout(Duration::from_secs(30))
+                .danger_accept_invalid_certs(true) // Accept self-signed certificates in development
                 .build()
                 .unwrap_or_default(),
             auth_token: std::env::var("CORE_TOKEN").ok(),
@@ -248,7 +249,7 @@ impl WebhookClient {
         // Send success payload as-is, without adding 'name' field
         self.send(url, &result).await
     }
-
+    
     /// Send a failure webhook
     pub async fn send_failure(
         &self,
