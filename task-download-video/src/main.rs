@@ -347,7 +347,7 @@ async fn process_download_video(
     
     info!("Video duration: {} seconds", duration);
 
-    let file_name = format!("{}.mp4", uuid::Uuid::new_v7());
+    let file_name = format!("{}.mp4", uuid::Uuid::now_v7());
     let s3_key = format!("{}/{}", payload.clip_id, file_name);
     
     info!("Uploading to S3 with key: {}", s3_key);
