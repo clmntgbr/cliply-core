@@ -91,6 +91,7 @@ async fn main() -> Result<()> {
                                     match process_download_video(&message.payload, &s3_client).await {
                                         Ok(result) => {
                                             info!("Video {} completed successfully", message.payload.video_id);
+                                            info!("Webhook success payload: {}", serde_json::to_string_pretty(&result).unwrap_or_default());
 
                                             if let Err(e) = webhook_client
                                                 .send_success(
@@ -110,6 +111,8 @@ async fn main() -> Result<()> {
                                                 "video_id": message.payload.video_id,
                                                 "clip_id": message.payload.clip_id,
                                             });
+
+                                            info!("Webhook failure payload: {}", serde_json::to_string_pretty(&failure_payload).unwrap_or_default());
 
                                             if let Err(webhook_err) = webhook_client
                                                 .send_failure(

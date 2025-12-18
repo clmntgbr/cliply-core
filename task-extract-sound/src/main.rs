@@ -74,6 +74,7 @@ async fn main() -> Result<()> {
                                     match process_extract_sound(&message.payload, &s3_client).await {
                                         Ok(result) => {
                                             info!("Clip {} completed successfully", message.payload.clip_id);
+                                            info!("Webhook success payload: {}", serde_json::to_string_pretty(&result).unwrap_or_default());
 
                                             if let Err(e) = webhook_client
                                                 .send_success(
@@ -93,6 +94,8 @@ async fn main() -> Result<()> {
                                                 "clip_id": message.payload.clip_id,
                                                 "video_id": message.payload.video_id,
                                             });
+
+                                            info!("Webhook failure payload: {}", serde_json::to_string_pretty(&failure_payload).unwrap_or_default());
 
                                             if let Err(webhook_err) = webhook_client
                                                 .send_failure(
@@ -167,7 +170,9 @@ async fn process_extract_sound_inner(
         .await
         .context("Failed to download video from S3")?;
 
-    let audio_output_pattern = format!("{}/{}_%03d.wav", temp_dir.to_string_lossy(), payload.clip_id);
+    // Generate a UUID v7 for the audio pattern
+    let audio_pattern_id = uuid::Uuid::now_v7();
+    let audio_output_pattern = format!("{}/{}_%03d.wav", temp_dir.to_string_lossy(), audio_pattern_id);
 
     let output = Command::new("ffmpeg")
         .arg("-i")
@@ -198,17 +203,19 @@ async fn process_extract_sound_inner(
     let mut segment_index = 1;
 
     loop {
-        let segment_file_name = format!("{}_{:03}.wav", payload.clip_id, segment_index);
-        let segment_path = temp_dir.join(&segment_file_name);
+        let temp_segment_file = format!("{}_{:03}.wav", audio_pattern_id, segment_index);
+        let temp_segment_path = temp_dir.join(&temp_segment_file);
 
-        if !tokio::fs::try_exists(&segment_path).await.unwrap_or(false) {
+        if !tokio::fs::try_exists(&temp_segment_path).await.unwrap_or(false) {
             break;
         }
 
+        // Generate a unique UUID v7 for each audio segment
+        let segment_file_name = format!("{}.wav", uuid::Uuid::now_v7());
         let s3_key = format!("{}/audios/{}", payload.clip_id, segment_file_name);
 
         let upload_result = s3_client
-            .upload_file(&segment_path.to_string_lossy(), &s3_key)
+            .upload_file(&temp_segment_path.to_string_lossy(), &s3_key)
             .await;
 
         if let Err(e) = upload_result {
