@@ -156,36 +156,6 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn get_video_duration(video_path: &str) -> Result<u64> {
-    let output = Command::new("ffprobe")
-        .arg("-v")
-        .arg("error")
-        .arg("-show_entries")
-        .arg("format=duration")
-        .arg("-of")
-        .arg("default=noprint_wrappers=1:nokey=1")
-        .arg(video_path)
-        .output()
-        .await
-        .context("Failed to execute ffprobe")?;
-
-    if !output.status.success() {
-        let error = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("ffprobe failed: {}", error));
-    }
-
-    let duration_str = String::from_utf8_lossy(&output.stdout);
-    let duration_float = duration_str
-        .trim()
-        .parse::<f64>()
-        .context("Failed to parse video duration")?;
-
-    // Round to nearest second
-    let duration = duration_float.round() as u64;
-
-    Ok(duration)
-}
-
 async fn process_download_video(
     payload: &DownloadVideoPayload,
     s3_client: &S3Client,
@@ -343,13 +313,6 @@ async fn process_download_video(
         return Err(anyhow::anyhow!("Downloaded file is empty"));
     }
 
-    // Get video duration
-    let duration = get_video_duration(&temp_file_path)
-        .await
-        .context("Failed to get video duration")?;
-    
-    info!("Video duration: {} seconds", duration);
-
     let file_name = format!("{}.mp4", uuid::Uuid::now_v7());
     let s3_key = format!("{}/{}", payload.clip_id, file_name);
     
@@ -377,7 +340,6 @@ async fn process_download_video(
         ),
         "format": "mp4",
         "size": file_size,
-        "duration": duration,
         "video_id": payload.video_id,
         "clip_id": payload.clip_id,
     }))

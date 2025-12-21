@@ -139,6 +139,36 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
+async fn get_video_duration(video_path: &str) -> Result<u64> {
+    let output = Command::new("ffprobe")
+        .arg("-v")
+        .arg("error")
+        .arg("-show_entries")
+        .arg("format=duration")
+        .arg("-of")
+        .arg("default=noprint_wrappers=1:nokey=1")
+        .arg(video_path)
+        .output()
+        .await
+        .context("Failed to execute ffprobe")?;
+
+    if !output.status.success() {
+        let error = String::from_utf8_lossy(&output.stderr);
+        return Err(anyhow::anyhow!("ffprobe failed: {}", error));
+    }
+
+    let duration_str = String::from_utf8_lossy(&output.stdout);
+    let duration_float = duration_str
+        .trim()
+        .parse::<f64>()
+        .context("Failed to parse video duration")?;
+
+    // Round to nearest second
+    let duration = duration_float.round() as u64;
+
+    Ok(duration)
+}
+
 async fn process_extract_sound(
     payload: &ExtractSoundPayload, 
     s3_client: &S3Client,
@@ -161,7 +191,7 @@ async fn process_extract_sound_inner(
     temp_dir: &std::path::PathBuf,
 ) -> Result<serde_json::Value> {
 
-    let video_file_name = format!("{}.mp4", payload.name);
+    let video_file_name = format!("{}", payload.name);
     let video_s3_key = format!("{}/{}", payload.clip_id, video_file_name);
     let temp_video_path = temp_dir.join(&video_file_name);
 
@@ -169,6 +199,13 @@ async fn process_extract_sound_inner(
         .download_file(&video_s3_key, &temp_video_path.to_string_lossy())
         .await
         .context("Failed to download video from S3")?;
+
+    // Get video duration
+    let duration = get_video_duration(&temp_video_path.to_string_lossy())
+        .await
+        .context("Failed to get video duration")?;
+    
+    info!("Video duration: {} seconds", duration);
 
     // Generate a UUID v7 for the audio pattern
     let audio_pattern_id = uuid::Uuid::now_v7();
@@ -230,6 +267,7 @@ async fn process_extract_sound_inner(
         "clip_id": payload.clip_id,
         "video_id": payload.video_id,
         "audio_files": audio_files,
+        "duration": duration,
     }))
 }
 
