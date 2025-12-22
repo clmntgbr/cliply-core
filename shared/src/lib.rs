@@ -22,17 +22,27 @@ pub struct WorkerMessage<T> {
 /// Payload for download video
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DownloadVideoPayload {
+    pub clip_id: Uuid,
     pub video_id: Uuid,
     pub url: String,
-    pub clip_id: Uuid,
 }
 
 /// Payload for extract sound
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExtractSoundPayload {
     pub clip_id: Uuid,
-    pub name: String,
     pub video_id: Uuid,
+    pub name: String,
+}
+
+/// Payload for transcript audio task
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TranscriptAudioPayload {
+    pub clip_id: Uuid,
+    pub video_id: Uuid,
+    pub audio_files: Vec<String>,
+    pub language: String,
+    pub is_fake: bool
 }
 
 #[derive(Debug, Clone)]

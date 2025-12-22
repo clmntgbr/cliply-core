@@ -32,3 +32,19 @@ services:
       retries: 3
       start_period: 10s
     restart: unless-stopped
+
+  task-transcript-audio:
+    container_name: task-transcript-audio
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /app/task-transcript-audio
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "task-transcript-audio"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

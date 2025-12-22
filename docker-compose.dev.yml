@@ -35,6 +35,23 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  task-transcript-audio:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        PACKAGE_NAME: task-transcript-audio
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    container_name: task-transcript-audio-dev
+    env_file:
+      - .env
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   cargo-cache:
   target-cache:

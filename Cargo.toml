@@ -3,6 +3,7 @@ members = [
     "shared",
     "task-download-video",
     "task-extract-sound",
+    "task-transcript-audio",
 ]
 resolver = "2"
 

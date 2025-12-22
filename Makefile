@@ -21,12 +21,16 @@ dev:
 	@echo "Run these commands in separate terminals:"
 	@echo "  cargo run --package task-download-video"
 	@echo "  cargo run --package task-extract-sound"
+	@echo "  cargo run --package task-transcript-audio"
 
 dev-video:
 	cargo run --package task-download-video
 
 dev-sound:
 	cargo run --package task-extract-sound
+
+dev-transcript-audio:
+	cargo run --package task-transcript-audio
 
 # Development with Docker (hot reload)
 dev-docker:
@@ -63,6 +67,9 @@ logs-download-video:
 
 logs-extract-sound:
 	docker-compose logs -f task-extract-sound
+
+logs-transcript-audio:
+	docker-compose logs -f task-transcript-audio
 
 # Utilities
 clean:

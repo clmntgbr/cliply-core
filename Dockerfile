@@ -45,7 +45,7 @@ RUN useradd -m -u 1000 appuser && \
 # Copy all binaries from builder
 COPY --from=builder /app/target/release/task-download-video /app/task-download-video
 COPY --from=builder /app/target/release/task-extract-sound /app/task-extract-sound
-
+COPY --from=builder /app/target/release/task-transcript-audio /app/task-transcript-audio
 
 # Switch to non-root user
 USER appuser
