@@ -45,6 +45,15 @@ pub struct TranscriptAudioPayload {
     pub is_fake: bool
 }
 
+/// Payload for analyse image task
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AnalyseImagePayload {
+    pub task_id: Uuid,
+    pub image_id: Uuid,
+    pub s3_bucket: String,
+    pub s3_key: String,
+}
+
 #[derive(Debug, Clone)]
 pub struct RabbitMQConfig {
     pub host: String,

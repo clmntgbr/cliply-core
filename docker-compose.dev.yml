@@ -52,6 +52,23 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  task-analyse-image:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        PACKAGE_NAME: task-analyse-image
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    container_name: task-analyse-image-dev
+    env_file:
+      - .env
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   cargo-cache:
   target-cache:

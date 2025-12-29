@@ -13,7 +13,8 @@ COPY Cargo.toml ./
 COPY shared ./shared
 COPY task-download-video ./task-download-video
 COPY task-extract-sound ./task-extract-sound
-
+COPY task-transcript-audio ./task-transcript-audio
+COPY task-analyse-image ./task-analyse-image
 
 # Build all packages in workspace
 RUN cargo build --release
@@ -46,6 +47,7 @@ RUN useradd -m -u 1000 appuser && \
 COPY --from=builder /app/target/release/task-download-video /app/task-download-video
 COPY --from=builder /app/target/release/task-extract-sound /app/task-extract-sound
 COPY --from=builder /app/target/release/task-transcript-audio /app/task-transcript-audio
+COPY --from=builder /app/target/release/task-analyse-image /app/task-analyse-image
 
 # Switch to non-root user
 USER appuser

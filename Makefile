@@ -22,6 +22,7 @@ dev:
 	@echo "  cargo run --package task-download-video"
 	@echo "  cargo run --package task-extract-sound"
 	@echo "  cargo run --package task-transcript-audio"
+	@echo "  cargo run --package task-analyse-image"
 
 dev-video:
 	cargo run --package task-download-video
@@ -31,6 +32,9 @@ dev-sound:
 
 dev-transcript-audio:
 	cargo run --package task-transcript-audio
+
+dev-analyse-image:
+	cargo run --package task-analyse-image
 
 # Development with Docker (hot reload)
 dev-docker:
@@ -70,6 +74,9 @@ logs-extract-sound:
 
 logs-transcript-audio:
 	docker-compose logs -f task-transcript-audio
+
+logs-analyse-image:
+	docker-compose logs -f task-analyse-image
 
 # Utilities
 clean:

@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README.md
+LICENSE
+docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+target/
+debug/
+release/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+Cargo.lock
+
+# Testing
+tests/
+examples/
+*.test
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+

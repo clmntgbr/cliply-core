@@ -48,3 +48,19 @@ services:
       retries: 3
       start_period: 10s
     restart: unless-stopped
+
+  task-analyse-image:
+    container_name: task-analyse-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /app/task-analyse-image
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "task-analyse-image"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

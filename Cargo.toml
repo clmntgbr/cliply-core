@@ -4,6 +4,7 @@ members = [
     "task-download-video",
     "task-extract-sound",
     "task-transcript-audio",
+    "task-analyse-image",
 ]
 resolver = "2"
 
