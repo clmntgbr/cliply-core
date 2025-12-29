@@ -42,7 +42,7 @@ pub struct TranscriptAudioPayload {
     pub video_id: Uuid,
     pub audio_files: Vec<String>,
     pub language: String,
-    pub is_fake: bool
+    pub activate_transcribing_audio: bool
 }
 
 /// Payload for analyse image task
