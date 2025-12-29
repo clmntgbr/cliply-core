@@ -172,7 +172,7 @@ async fn process_transcript_audio_inner(
     assemblyai_api_key: String,
 ) -> Result<serde_json::Value> {
 
-    if payload.activate_transcribing_audio {
+    if false ==payload.activate_transcribing_audio {
         return transcript_fake_audio(payload, s3_client, temp_dir).await;
     }
 
